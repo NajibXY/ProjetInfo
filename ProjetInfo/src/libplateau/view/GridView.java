@@ -34,11 +34,19 @@ public class GridView extends Parent implements Observer {
     public void addPiece(Piece piece, Dimension2D pos) {
         gridModel.addPiece(piece, pos);
     }
-
-    private Grid gridModel;
+    
+    public boolean movePiece(Piece piece, Dimension2D npos) {
+        return gridModel.movePiece(piece, npos);
+    }
+    
+    public Grid getModel() {
+        return this.gridModel;
+    }
 
     @Override
     public void update(Observable o, Object arg) {
         o.notifyObservers();
     }
+    
+    private Grid gridModel;
 }

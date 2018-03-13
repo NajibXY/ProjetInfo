@@ -53,7 +53,21 @@ public class Piece {
     {
         return this.num;
     }
-
+    
+    public void rotate(){
+        boolean[][] tab = new boolean[(int)this.getSize().getHeight()][(int)this.getSize().getWidth()];
+        int ni = 0; int nj;
+        int i,j;
+        for(j=0;j<(int)this.getSize().getHeight();j++){
+            nj=0;
+            for(i=(int)this.getSize().getWidth()-1;i>-1;i--){
+                tab[ni][nj]=this.tab[i][j];
+                nj++;
+            }
+            ni++;
+        }
+        this.tab = tab;
+    }
     private boolean[][] tab;
     private Dimension2D pos;
     private int num;

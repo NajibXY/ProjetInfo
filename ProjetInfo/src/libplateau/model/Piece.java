@@ -1,15 +1,23 @@
 package libplateau.model;
 
 import javafx.geometry.Dimension2D;
+import javafx.scene.paint.Color;
 
 public class Piece {
-    public Piece(boolean[][] tab)
+    public Piece(boolean[][] tab, Color color, Dimension2D pos)
     {
         this.tab = tab;
         this.num = ++maxNum;
+        this.color = color;
+        this.pos = pos;
+    }
+    
+    public Piece(boolean[][] tab, Color color)
+    {
+        this(tab, color, null);
     }
 
-    public Piece(String[] tab)
+    public Piece(String[] tab, Color color, Dimension2D pos)
     {
         int h = tab.length;
         int w = tab[0].length();
@@ -26,6 +34,13 @@ public class Piece {
             }
         }
         this.num = ++maxNum;
+        this.color = color;
+        this.pos = pos;
+    }
+    
+    public Piece(String[] tab, Color color)
+    {
+        this(tab, color, null);
     }
 
     public boolean[][] getTab()
@@ -35,10 +50,10 @@ public class Piece {
     
     public Dimension2D getSize()
     {
-        int h = tab.length;
-        int w = tab[0].length;
+        int w = tab.length;
+        int h = tab[0].length;
         
-        return new Dimension2D(h, w);
+        return new Dimension2D(w, h);
     }
 
     public Dimension2D getPos() {
@@ -47,6 +62,14 @@ public class Piece {
 
     public void setPos(Dimension2D pos) {
         this.pos = pos;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
     
     public int getNum()
@@ -71,5 +94,6 @@ public class Piece {
     private boolean[][] tab;
     private Dimension2D pos;
     private int num;
+    private Color color;
     private static int maxNum = 0;
 }

@@ -1,21 +1,22 @@
 package libplateau.view;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.geometry.Dimension2D;
-import javafx.scene.Parent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import libplateau.model.Grid;
 import libplateau.model.Piece;
+import libplateau.model.Tile;
 
-public class GridView extends Parent implements Observer {
+public class GridView extends GridPane implements Observer {
     public GridView(Dimension2D dim, Color color)
     {
         gridModel = new Grid(dim, color);
         
-        GridPane grid = new GridPane();
         for(int i = 0; i < dim.getHeight(); i++)
         {
             for(int j = 0; j < dim.getWidth(); j++)
@@ -23,11 +24,10 @@ public class GridView extends Parent implements Observer {
                 Rectangle rect = new Rectangle(100, 100);
                 rect.setFill(color);
                 rect.setStroke(Color.BLACK);
-                grid.add(rect, i, j);
+                this.add(rect, i, j);
             }
         }
         
-        this.getChildren().add(grid);
         gridModel.addObserver(this);
     }
     
@@ -45,7 +45,18 @@ public class GridView extends Parent implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        o.notifyObservers();
+        if(!(o instanceof Grid))
+            return;
+        
+        if(!(arg instanceof List))
+            return;
+        
+        Grid grid = (Grid) o;
+        List<Tile> tiles = (List<Tile>) arg;
+        for(Tile tile : tiles)
+        {
+            ((Rectangle)(this.getChildren().get(0))).setFill(tile.getColor());
+        }
     }
     
     private Grid gridModel;

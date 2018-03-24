@@ -27,32 +27,42 @@ public class Grid extends Observable {
     public List<Piece> getPieces() {
         return pieces;
     }
+    
+    public Piece getPiece(Dimension2D pos)
+    {
+        for(Piece p : pieces) {
+            if(p.isOnPosition(pos))
+                return p;
+        }
+        
+        return null;
+    }
 
     public Dimension2D getDim() {
         return dim;
     }
 
-    public void addPiece(Piece piece, Dimension2D pos) {
+    public boolean addPiece(Piece piece, Dimension2D pos) {
         if (this.checkCollision(piece, pos))
-            return;
+            return false;
         
         piece.setPos(pos);
         this.pieces.add(piece);
         boolean[][] tab = piece.getTab();
-        List<Tile> updatedTiles = new ArrayList<>();
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[i].length; j++) {
                 if (tab[i][j] == true) {
                     Tile tile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
                     tile.setVal(piece.getNum());
                     tile.setColor(piece.getColor());
-                    updatedTiles.add(tile);
                 }
             }
         }
         
         setChanged();
-        notifyObservers(updatedTiles);
+        notifyObservers();
+        
+        return true;
     }
 
     public Tile[][] getGrid() {
@@ -60,30 +70,47 @@ public class Grid extends Observable {
     }
     
     public boolean movePiece(Piece p, Dimension2D npos) {
-        if(this.checkCollision(p, npos))
-            return false;
-        
         boolean[][] tab = p.getTab();
         Dimension2D pos = p.getPos();
+        
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[i].length; j++) {
                 if (tab[i][j] == true) {
-                    Tile tile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
-                    tile.setVal(0);
-                    tile.setColor(this.backroundColor);
+                    Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                    oldTile.setVal(0);
+                    oldTile.setColor(this.backroundColor);
                 }
             }
+        }
+        
+        if(this.checkCollision(p, npos))
+        {
+            for (int i = 0; i < tab.length; i++) {
+                for (int j = 0; j < tab[i].length; j++) {
+                    if (tab[i][j] == true) {
+                        Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                        oldTile.setVal(p.getNum());
+                        oldTile.setColor(p.getColor());
+                    }
+                }
+            }
+            
+            return false;
         }
         
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[i].length; j++) {
                 if (tab[i][j] == true) {
-                    Tile tile = this.grid[(int) npos.getWidth() + i][(int) npos.getHeight() + j];
-                    tile.setVal(p.getNum());
-                    tile.setColor(p.getColor());
+                    Tile newTile = this.grid[(int) npos.getWidth() + i][(int) npos.getHeight() + j];
+                    newTile.setVal(p.getNum());
+                    newTile.setColor(p.getColor());
                 }
             }
         }
+
+        p.setPos(npos);
+        setChanged();
+        notifyObservers();
         
         return true;
     }
@@ -94,12 +121,16 @@ public class Grid extends Observable {
         Dimension2D origin = new Dimension2D((pos.getWidth() + size.getWidth()) / 2, (pos.getHeight() + size.getHeight()) / 2);
         
         pos = new Dimension2D(pos.getWidth() - origin.getWidth(), pos.getHeight() - origin.getHeight());
+        
+        setChanged();
+        notifyObservers();
     }
 
-    public boolean checkCollision(Piece p, Dimension2D npos) {
-        //needs Tile
+    public boolean checkCollision(Piece p, Dimension2D npos)
+    {
         Dimension2D size = p.getSize();
         boolean[][] tab = p.getTab();
+        
         for (int i = 0; i < size.getWidth(); i++) {
             for (int j = 0; j < size.getHeight(); j++) {
                 if(tab[i][j] == true) {
@@ -109,10 +140,12 @@ public class Grid extends Observable {
                 }
             }
         }
+        
         return false;
     }
     
-    public void print() {
+    public void print()
+    {
         for(int i = 0; i < grid.length; i++) {
             for(int j = 0; j < grid[0].length; j++){
                 System.out.print(grid[i][j].getVal() + ", ");

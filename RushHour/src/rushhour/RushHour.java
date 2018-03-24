@@ -8,12 +8,11 @@ package rushhour;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import libplateau.model.Piece;
@@ -25,25 +24,44 @@ import libplateau.view.GridView;
  */
 public class RushHour extends Application {
     
+    private Piece selectedPiece;
+    
     @Override
     public void start(Stage primaryStage) {
         GridView gridView = new GridView(new Dimension2D(6, 6), Color.WHITE);
         //gridView.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THICK)));
         
         List<GameStage> gameStages = createGameStages();
-        
-        GameStage currentGameStage = gameStages.get(0);
-        
-        for(Piece p : currentGameStage.getPieces())
-        {
-            gridView.addPiece(p, p.getPos());
-        }
+        gameStages.get(0).applyToGrid(gridView);
+        Piece p = gameStages.get(0).getPieces().get(0);
+        if(gridView.movePiece(p, new Dimension2D(0, 0)))
+            System.out.println("ca marche");
         
         gridView.getModel().print();
         
+        gridView.setOnMousePressed((MouseEvent event) -> {
+            Node node = event.getPickResult().getIntersectedNode();
+            Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/100), (int)(node.getLayoutX()/100));
+            System.out.println("pos = " + pos);
+            selectedPiece = gridView.getModel().getPiece(pos);
+            System.out.println("p = " + selectedPiece);
+        });
+        
+        gridView.setOnMouseReleased((MouseEvent event) -> {
+            Node node = event.getPickResult().getIntersectedNode();
+            Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/100), (int)(node.getLayoutX()/100));
+            System.out.println("pos = " + pos);
+            if(selectedPiece != null) {
+                boolean isRow = (selectedPiece.getSize().getHeight() > selectedPiece.getSize().getWidth());
+                if(isRow && selectedPiece.getPos().getWidth() == pos.getWidth() || !isRow && selectedPiece.getPos().getHeight() == pos.getHeight())
+                    gridView.movePiece(selectedPiece, pos);
+            }
+            
+            selectedPiece = null;
+        });
         
         final Scene scene = new Scene(gridView, 700, 700);
-        primaryStage.setTitle("Ruuuuuuuuuush Houuuuuuuuuuuuuur !");
+        primaryStage.setTitle("Rush Hour !");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

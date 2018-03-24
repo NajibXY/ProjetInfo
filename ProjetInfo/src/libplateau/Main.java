@@ -21,7 +21,7 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();*/
             
-            Piece p = new Piece(new boolean[][]{{true, true ,true}, {true, false,true}});
+            Piece p = new Piece(new boolean[][]{{true, true ,true}, {true, false,true}}, Color.BLUE);
             boolean[][] tab = p.getTab();
             for(int i=0;i<tab.length;i++){
                 for(int j=0; j<tab[i].length;j++){

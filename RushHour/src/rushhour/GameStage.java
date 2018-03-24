@@ -7,12 +7,14 @@ package rushhour;
 
 import java.util.List;
 import libplateau.model.Piece;
+import libplateau.view.GridView;
 
 /**
  *
  * @author axelb
  */
-public class GameStage {
+public class GameStage
+{
     public GameStage(List<Piece> pieces)
     {
         this.pieces = pieces;
@@ -22,6 +24,14 @@ public class GameStage {
     public List<Piece> getPieces()
     {
         return pieces;
+    }
+    
+    public void applyToGrid(GridView gridView)
+    {
+        for(Piece p : this.getPieces())
+        {
+            gridView.addPiece(p, p.getPos());
+        }
     }
     
     List<Piece> pieces;

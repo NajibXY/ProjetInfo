@@ -91,6 +91,25 @@ public class Piece {
         }
         this.tab = tab;
     }
+    
+    public boolean isOnPosition(Dimension2D pos)
+    {
+        if(this.pos == null)
+            return false;
+        
+        for(int i = 0; i < getSize().getWidth(); i++) {
+            for(int j = 0; j < getSize().getHeight(); j++) {
+                if(tab[i][j] == true) {
+                    if(pos.equals(new Dimension2D(this.pos.getWidth() + i, this.pos.getHeight() + j))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     private boolean[][] tab;
     private Dimension2D pos;
     private int num;

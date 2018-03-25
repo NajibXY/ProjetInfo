@@ -34,7 +34,7 @@ public class RushHour extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        gridView = new GridView(new Dimension2D(6, 6), Color.WHITE);
+        gridView = new GridView(new Dimension2D(6, 6), 100, Color.WHITE);
         //gridView.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THICK)));
         
         gameStages = createGameStages();

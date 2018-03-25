@@ -10,7 +10,7 @@ import libplateau.model.Grid;
 import libplateau.model.Piece;
 
 public class GridView extends GridPane implements Observer {
-    public GridView(Dimension2D dim, Color color)
+    public GridView(Dimension2D dim, int rectSize, Color color)
     {
         gridModel = new Grid(dim, color);
         
@@ -18,8 +18,7 @@ public class GridView extends GridPane implements Observer {
         {
             for(int j = 0; j < dim.getWidth(); j++)
             {
-                Rectangle rect = new Rectangle(100, 100);
-                rect.setFill(color);
+                Rectangle rect = new Rectangle(rectSize, rectSize, color);
                 rect.setStroke(Color.BLACK);
                 this.add(rect, i, j);
             }

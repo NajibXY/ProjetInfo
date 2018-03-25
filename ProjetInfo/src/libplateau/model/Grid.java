@@ -144,6 +144,20 @@ public class Grid extends Observable {
         return false;
     }
     
+    public void clearGrid()
+    {
+        if(pieces.isEmpty())
+            return;
+        
+        pieces.clear();
+        for(int i = 0; i < dim.getWidth(); i++) {
+            for(int j = 0; j < dim.getHeight(); j++) {
+                grid[i][j].setColor(backroundColor);
+                grid[i][j].setVal(0);
+            }
+        }
+    }
+    
     public void print()
     {
         for(int i = 0; i < grid.length; i++) {

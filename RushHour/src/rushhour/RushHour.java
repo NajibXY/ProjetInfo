@@ -5,13 +5,16 @@
  */
 package rushhour;
 
+import static java.lang.System.exit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,17 +28,17 @@ import libplateau.view.GridView;
 public class RushHour extends Application {
     
     private Piece selectedPiece;
+    private List<GameStage> gameStages;
+    private int currentGameStage = 0;
+    private GridView gridView;
     
     @Override
     public void start(Stage primaryStage) {
-        GridView gridView = new GridView(new Dimension2D(6, 6), Color.WHITE);
+        gridView = new GridView(new Dimension2D(6, 6), Color.WHITE);
         //gridView.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THICK)));
         
-        List<GameStage> gameStages = createGameStages();
-        gameStages.get(0).applyToGrid(gridView);
-        Piece p = gameStages.get(0).getPieces().get(0);
-        if(gridView.movePiece(p, new Dimension2D(0, 0)))
-            System.out.println("ca marche");
+        gameStages = createGameStages();
+        gameStages.get(currentGameStage).applyToGrid(gridView);
         
         gridView.getModel().print();
         
@@ -54,7 +57,32 @@ public class RushHour extends Application {
             if(selectedPiece != null) {
                 boolean isRow = (selectedPiece.getSize().getHeight() > selectedPiece.getSize().getWidth());
                 if(isRow && selectedPiece.getPos().getWidth() == pos.getWidth() || !isRow && selectedPiece.getPos().getHeight() == pos.getHeight())
+                {
                     gridView.movePiece(selectedPiece, pos);
+                    if(gridView.getModel().getGrid()[2][5].getColor().equals(Color.RED))
+                    {
+                        Alert alertEndStage = new Alert(AlertType.INFORMATION);
+                        alertEndStage.setTitle("Victoire");
+                        alertEndStage.setHeaderText(null);
+                        alertEndStage.setContentText("Bien joué !!!");
+                        alertEndStage.showAndWait();
+                        
+                        currentGameStage++;
+                        if(currentGameStage != gameStages.size()) {
+                            gameStages.get(currentGameStage).applyToGrid(gridView);
+                        }
+                        else
+                        {
+                            Alert alertEndGame = new Alert(AlertType.INFORMATION);
+                            alertEndGame.setTitle("Victoire");
+                            alertEndGame.setHeaderText(null);
+                            alertEndGame.setContentText("Vous avez terminé tous les niveaux. Bravo !!!");
+                            alertEndGame.showAndWait();
+                            
+                            exit(0);
+                        }
+                    }
+                }
             }
             
             selectedPiece = null;
@@ -68,15 +96,22 @@ public class RushHour extends Application {
     
     public List<GameStage> createGameStages()
     {
-        List<GameStage> gameStages = new ArrayList<>();
+        List<GameStage> gameStageList = new ArrayList<>();
         
-        List<Piece> pieceList = new ArrayList<>();
-        pieceList.add(new Piece(new boolean[][] {{true, true}}, Color.RED, new Dimension2D(2, 0)));
-        pieceList.add(new Piece(new boolean[][] {{true}, {true}}, Color.BLUE, new Dimension2D(3, 0)));
-        pieceList.add(new Piece(new boolean[][] {{true, true}}, Color.YELLOW, new Dimension2D(0, 0)));
-        gameStages.add(new GameStage(pieceList));
+        gameStageList.add(new GameStage(new ArrayList<>(Arrays.asList(new Piece[] {
+            new Piece(new boolean[][] {{true, true}}, Color.RED, new Dimension2D(2, 0)),
+            new Piece(new boolean[][] {{true}, {true}}, Color.BLUE, new Dimension2D(3, 0)),
+            new Piece(new boolean[][] {{true, true}}, Color.YELLOW, new Dimension2D(0, 0))
+        }))));
         
-        return gameStages;
+        gameStageList.add(new GameStage(new ArrayList<>(Arrays.asList(new Piece[] {
+            new Piece(new boolean[][] {{true, true}}, Color.RED, new Dimension2D(2, 0)),
+            new Piece(new boolean[][] {{true}, {true}, {true}}, Color.GREEN, new Dimension2D(3, 2)),
+            new Piece(new boolean[][] {{true, true, true}}, Color.PURPLE, new Dimension2D(0, 0)),
+            new Piece(new boolean[][] {{true}, {true}}, Color.BLUE, new Dimension2D(2, 3))
+        }))));
+        
+        return gameStageList;
     }
 
     /**

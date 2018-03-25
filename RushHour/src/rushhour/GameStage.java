@@ -28,6 +28,7 @@ public class GameStage
     
     public void applyToGrid(GridView gridView)
     {
+        gridView.getModel().clearGrid();
         for(Piece p : this.getPieces())
         {
             gridView.addPiece(p, p.getPos());

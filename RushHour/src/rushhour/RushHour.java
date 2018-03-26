@@ -34,7 +34,7 @@ public class RushHour extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        gridView = new GridView(new Dimension2D(6, 6), 100, Color.WHITE);
+        gridView = new GridView(new Dimension2D(8, 8), 100, Color.WHITE);
         //gridView.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THICK)));
         
         gameStages = createGameStages();
@@ -59,7 +59,7 @@ public class RushHour extends Application {
                 if(isRow && selectedPiece.getPos().getWidth() == pos.getWidth() || !isRow && selectedPiece.getPos().getHeight() == pos.getHeight())
                 {
                     gridView.movePiece(selectedPiece, pos);
-                    if(gridView.getModel().getGrid()[2][5].getColor().equals(Color.RED))
+                    if(gridView.getModel().getGrid()[3][7].getColor().equals(Color.RED))
                     {
                         Alert alertEndStage = new Alert(AlertType.INFORMATION);
                         alertEndStage.setTitle("Victoire");
@@ -88,7 +88,7 @@ public class RushHour extends Application {
             selectedPiece = null;
         });
         
-        final Scene scene = new Scene(gridView, 700, 700);
+        final Scene scene = new Scene(gridView);
         primaryStage.setTitle("Rush Hour !");
         primaryStage.setScene(scene);
         primaryStage.show();

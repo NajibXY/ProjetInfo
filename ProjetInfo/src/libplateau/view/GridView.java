@@ -10,6 +10,11 @@ import libplateau.model.Grid;
 import libplateau.model.Piece;
 
 public class GridView extends GridPane implements Observer {
+    public GridView(Dimension2D dim, int rectSize)
+    {
+        this(dim, rectSize, Color.WHITE);
+    }
+    
     public GridView(Dimension2D dim, int rectSize, Color color)
     {
         gridModel = new Grid(dim, color);
@@ -33,6 +38,10 @@ public class GridView extends GridPane implements Observer {
     
     public boolean movePiece(Piece piece, Dimension2D npos) {
         return gridModel.movePiece(piece, npos);
+    }
+    
+    public void removePiece(Piece piece) {
+        gridModel.removePiece(piece);
     }
     
     public Grid getModel() {

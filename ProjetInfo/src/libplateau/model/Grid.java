@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 public class Grid extends Observable {
 
     public Grid(Dimension2D dim) {
-        this(dim, Color.GRAY);
+        this(dim, Color.WHITE);
     }
 
     public Grid(Dimension2D dim, Color color) {
@@ -113,6 +113,27 @@ public class Grid extends Observable {
         notifyObservers();
         
         return true;
+    }
+    
+    public void removePiece(Piece p)
+    {
+        boolean[][] tab = p.getTab();
+        Dimension2D pos = p.getPos();
+        
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[i].length; j++) {
+                if (tab[i][j] == true) {
+                    Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                    oldTile.setVal(0);
+                    oldTile.setColor(this.backroundColor);
+                }
+            }
+        }
+        
+        pieces.remove(p);
+        
+        setChanged();
+        notifyObservers();
     }
     
     public void rotatePiece(Piece p) {

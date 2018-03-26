@@ -31,15 +31,15 @@ public class GameStage
     public void applyToGrid(GridView gridView)
     {
         gridView.getModel().clearGrid();
-        gridView.addPiece(new Piece(new boolean[][]{
-            {true, true, true, true, true, true, true, true},
-            {true, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, false},
-            {true, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, true},
-            {true, false, false, false, false, false, false, true},
-            {true, true, true, true, true, true, true, true}
+        gridView.addPiece(new Piece(new String[] {
+            "XXXXXXXX",
+            "X      X",
+            "X      X",
+            "X       ",
+            "X      X",
+            "X      X",
+            "X      X",
+            "XXXXXXXX"
         }, Color.BLACK), new Dimension2D(0, 0));
         for(Piece p : this.getPieces())
         {

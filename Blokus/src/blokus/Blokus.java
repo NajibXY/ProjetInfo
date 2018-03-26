@@ -5,13 +5,13 @@
  */
 package blokus;
 
-import java.util.ArrayList;
+import static java.lang.System.exit;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -28,46 +28,132 @@ import libplateau.view.GridView;
 public class Blokus extends Application {
     
     private GridView gridView;
+    private GridView pressedGrid;
+    private Piece selectedPiece;
+    private int currentPlayer = 0;
+    private Rectangle leftRect = new Rectangle(240, 40, Color.BLUE);
+    private Rectangle rightRect = new Rectangle(240, 40, Color.BLUE);
     
     @Override
     public void start(Stage primaryStage) {
-        gridView = new GridView(new Dimension2D(20, 20), 20, Color.WHITE);
+        gridView = new GridView(new Dimension2D(20, 20), 25);
         
         BorderPane borderPane = new BorderPane(gridView);
         
-        Rectangle blueRect = new Rectangle(100, 100, Color.WHITE);
-        blueRect.setStroke(Color.BLUE);
-        Rectangle yellowRect = new Rectangle(100, 100, Color.WHITE);
-        blueRect.setStroke(Color.YELLOW);
-        Rectangle greenRect = new Rectangle(100, 100, Color.WHITE);
-        blueRect.setStroke(Color.GREEN);
-        Rectangle redRect = new Rectangle(100, 100, Color.WHITE);
-        blueRect.setStroke(Color.RED);
+        GridView topLeft = new GridView(new Dimension2D(15, 15), 15);
+        for(Piece p : PieceFactory.generateDeck(Color.BLUE))
+        {
+            topLeft.addPiece(p, p.getPos());
+        }
         
-        borderPane.setLeft(new VBox(10, new ChoiceBox<>(createBlokusPieces(Color.BLUE)), yellowRect));
-        borderPane.setRight(new VBox(10, greenRect, redRect));
+        GridView bottomLeft = new GridView(new Dimension2D(15, 15), 15);
+        for(Piece p : PieceFactory.generateDeck(Color.GREEN))
+        {
+            bottomLeft.addPiece(p, p.getPos());
+        }
         
-        gridView.setOnMouseClicked((MouseEvent event) -> {
-            
+        GridView topRight = new GridView(new Dimension2D(15, 15), 15);
+        for(Piece p : PieceFactory.generateDeck(Color.YELLOW))
+        {
+            topRight.addPiece(p, p.getPos());
+        }
+        
+        GridView bottomRight = new GridView(new Dimension2D(15, 15), 15);
+        for(Piece p : PieceFactory.generateDeck(Color.RED))
+        {
+            bottomRight.addPiece(p, p.getPos());
+        }
+        
+        borderPane.setLeft(new VBox(0, topLeft, leftRect, bottomLeft));
+        borderPane.setRight(new VBox(0, topRight, rightRect, bottomRight));
+        
+        topLeft.setOnMouseClicked(new PickPieceEventHandler(topLeft));
+        
+        gridView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event){
+                Node node = event.getPickResult().getIntersectedNode();
+                Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/25), (int)(node.getLayoutX()/25));
+                if(selectedPiece != null)
+                {
+                    Dimension2D oldPos = selectedPiece.getPos();
+                    if(gridView.addPiece(selectedPiece, pos)) {
+                        selectedPiece.setPos(oldPos);
+                        pressedGrid.removePiece(selectedPiece);
+                        currentPlayer = (currentPlayer + 1) % 4;
+                        
+                        switch(currentPlayer)
+                        {
+                            case 0 :
+                                topLeft.setOnMouseClicked(new PickPieceEventHandler(topLeft));
+                                bottomLeft.setOnMouseClicked(null);
+                                topRight.setOnMouseClicked(null);
+                                bottomRight.setOnMouseClicked(null);
+                                leftRect.setFill(Color.BLUE);
+                                rightRect.setFill(Color.BLUE);
+                                break;
+                            case 1 :
+                                topLeft.setOnMouseClicked(null);
+                                bottomLeft.setOnMouseClicked(null);
+                                topRight.setOnMouseClicked(new PickPieceEventHandler(topRight));
+                                bottomRight.setOnMouseClicked(null);
+                                leftRect.setFill(Color.YELLOW);
+                                rightRect.setFill(Color.YELLOW);
+                                break;
+                            case 2 :
+                                topLeft.setOnMouseClicked(null);
+                                bottomLeft.setOnMouseClicked(null);
+                                topRight.setOnMouseClicked(null);
+                                bottomRight.setOnMouseClicked(new PickPieceEventHandler(bottomRight));
+                                leftRect.setFill(Color.RED);
+                                rightRect.setFill(Color.RED);
+                                break;
+                            case 3 :
+                                topLeft.setOnMouseClicked(null);
+                                bottomLeft.setOnMouseClicked(new PickPieceEventHandler(bottomLeft));
+                                topRight.setOnMouseClicked(null);
+                                bottomRight.setOnMouseClicked(null);
+                                leftRect.setFill(Color.GREEN);
+                                rightRect.setFill(Color.GREEN);
+                                break;
+                        }
+                    }
+                    selectedPiece = null;
+                    if(pressedGrid.getModel().getPieces().isEmpty())
+                    {
+                        Alert alertEndGame = new Alert(Alert.AlertType.INFORMATION);
+                        alertEndGame.setTitle("Victoire");
+                        alertEndGame.setHeaderText(null);
+                        alertEndGame.setContentText("Le joueur " + "" + " a gagné !!!");
+                        alertEndGame.showAndWait();
+
+                        exit(0);
+                    }
+                }
+            }
         });
         
         final Scene scene = new Scene(borderPane);
-        primaryStage.setTitle("Rush Hour !");
+        primaryStage.setTitle("Blokus");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
     
-    public ObservableList<Piece> createBlokusPieces(Color color)
-    {
-        ArrayList<Piece> blokusPieces = new ArrayList<>();
+    private class PickPieceEventHandler implements EventHandler<MouseEvent> {
+        public PickPieceEventHandler(GridView thisGrid)
+        {
+            currentGridView = thisGrid;
+        }
         
-        blokusPieces.add(new Piece(new boolean[][] {{true, true, true, true, true}}, color));
-        blokusPieces.add(new Piece(new boolean[][] {{true, true, true, true}, {true, false, false, false}}, color));
-        blokusPieces.add(new Piece(new boolean[][] {{false, true, true, true}, {true, true, false, false}}, color));
-        blokusPieces.add(new Piece(new boolean[][] {{true, true, true}, {true, false, false}, {true, false, false}}, color));
-        blokusPieces.add(new Piece(new boolean[][] {{false, true, true}, {true, true, false}, {true, false, false}}, color));
+        @Override
+        public void handle(MouseEvent event){
+            Node node = event.getPickResult().getIntersectedNode();
+            Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/15), (int)(node.getLayoutX()/15));
+            selectedPiece = currentGridView.getModel().getPiece(pos);
+            pressedGrid = currentGridView;
+        }
         
-        return FXCollections.observableArrayList(blokusPieces);
+        private final GridView currentGridView;
     }
 
     /**

@@ -35,7 +35,6 @@ public class RushHour extends Application {
     @Override
     public void start(Stage primaryStage) {
         gridView = new GridView(new Dimension2D(8, 8), 100, Color.WHITE);
-        //gridView.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THICK)));
         
         gameStages = createGameStages();
         gameStages.get(currentGameStage).applyToGrid(gridView);
@@ -45,15 +44,12 @@ public class RushHour extends Application {
         gridView.setOnMousePressed((MouseEvent event) -> {
             Node node = event.getPickResult().getIntersectedNode();
             Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/100), (int)(node.getLayoutX()/100));
-            System.out.println("pos = " + pos);
             selectedPiece = gridView.getModel().getPiece(pos);
-            System.out.println("p = " + selectedPiece);
         });
         
         gridView.setOnMouseReleased((MouseEvent event) -> {
             Node node = event.getPickResult().getIntersectedNode();
             Dimension2D pos = new Dimension2D((int)(node.getLayoutY()/100), (int)(node.getLayoutX()/100));
-            System.out.println("pos = " + pos);
             if(selectedPiece != null) {
                 boolean isRow = (selectedPiece.getSize().getHeight() > selectedPiece.getSize().getWidth());
                 if(isRow && selectedPiece.getPos().getWidth() == pos.getWidth() || !isRow && selectedPiece.getPos().getHeight() == pos.getHeight())

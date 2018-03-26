@@ -19,12 +19,12 @@ public class Piece {
 
     public Piece(String[] tab, Color color, Dimension2D pos)
     {
-        int h = tab.length;
-        int w = tab[0].length();
-        this.tab = new boolean[h][w];
-        for(int i = 0; i < h; i++)
+        int w = tab.length;
+        int h = tab[0].length();
+        this.tab = new boolean[w][h];
+        for(int i = 0; i < w; i++)
         {
-            for(int j = 0; j < w; j++)
+            for(int j = 0; j < h; j++)
             {
                 char c = tab[i].charAt(j);
                 if(c == 'X')

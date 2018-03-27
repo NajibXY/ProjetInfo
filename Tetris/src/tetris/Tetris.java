@@ -1,8 +1,5 @@
 package tetris;
   
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Application; 
@@ -19,7 +16,7 @@ public class Tetris extends Application {
     
     private GridView gridView;
     private Piece currentPiece;
-    private int interval = 1000;
+    private final int interval = 1000;
     private boolean isGameFinished = false;
     Timer timer = new Timer();
   

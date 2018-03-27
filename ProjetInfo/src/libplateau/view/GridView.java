@@ -44,6 +44,10 @@ public class GridView extends GridPane implements Observer {
         gridModel.removePiece(piece);
     }
     
+    public void rotatePiece(Piece piece, boolean clockWise) {
+        gridModel.rotatePiece(piece, clockWise);
+    }
+    
     public Grid getModel() {
         return this.gridModel;
     }

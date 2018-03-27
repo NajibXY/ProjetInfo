@@ -77,18 +77,34 @@ public class Piece {
         return this.num;
     }
     
-    public void rotate(){
+    public void rotate(boolean clockWise)
+    {
         boolean[][] tab = new boolean[(int)this.getSize().getHeight()][(int)this.getSize().getWidth()];
-        int ni = 0; int nj;
+        int ni = 0, nj = 0;
         int i,j;
-        for(j=0;j<(int)this.getSize().getHeight();j++){
-            nj=0;
-            for(i=(int)this.getSize().getWidth()-1;i>-1;i--){
-                tab[ni][nj]=this.tab[i][j];
-                nj++;
+        if(clockWise)
+        {
+            for(j = 0; j < (int) this.getSize().getHeight(); j++){
+                nj=0;
+                for(i = (int) this.getSize().getWidth() - 1; i > -1; i--){
+                    tab[ni][nj]=this.tab[i][j];
+                    nj++;
+                }
+                ni++;
             }
-            ni++;
         }
+        else
+        {
+            for(j = (int) this.getSize().getHeight() - 1; j > -1; j--){
+                nj=0;
+                for(i = 0; i < (int) this.getSize().getWidth(); i++){
+                    tab[ni][nj]=this.tab[i][j];
+                    nj++;
+                }
+                ni++;
+            }
+        }
+        
         this.tab = tab;
     }
     

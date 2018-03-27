@@ -136,15 +136,57 @@ public class Grid extends Observable {
         notifyObservers();
     }
     
-    public void rotatePiece(Piece p) {
+    public boolean rotatePiece(Piece p, boolean clockWise)
+    {
+        boolean[][] tab = p.getTab();
         Dimension2D pos = p.getPos();
-        Dimension2D size = p.getSize();
-        Dimension2D origin = new Dimension2D((pos.getWidth() + size.getWidth()) / 2, (pos.getHeight() + size.getHeight()) / 2);
         
-        pos = new Dimension2D(pos.getWidth() - origin.getWidth(), pos.getHeight() - origin.getHeight());
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[i].length; j++) {
+                if (tab[i][j] == true) {
+                    Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                    oldTile.setVal(0);
+                    oldTile.setColor(this.backroundColor);
+                }
+            }
+        }
+        
+        p.rotate(clockWise);
+        
+        if(this.checkCollision(p, p.getPos()))
+        {
+            for (int i = 0; i < tab.length; i++) {
+                for (int j = 0; j < tab[i].length; j++) {
+                    if (tab[i][j] == true) {
+                        Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                        oldTile.setVal(p.getNum());
+                        oldTile.setColor(p.getColor());
+                    }
+                }
+            }
+            
+            p.rotate(!clockWise);
+            
+            return false;
+        }
+        
+        tab = p.getTab();
+        pos = p.getPos();
+        
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[i].length; j++) {
+                if (tab[i][j] == true) {
+                    Tile oldTile = this.grid[(int) pos.getWidth() + i][(int) pos.getHeight() + j];
+                    oldTile.setVal(p.getNum());
+                    oldTile.setColor(p.getColor());
+                }
+            }
+        }
         
         setChanged();
         notifyObservers();
+        
+        return true;
     }
 
     public boolean checkCollision(Piece p, Dimension2D npos)

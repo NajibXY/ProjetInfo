@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Scene; 
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage; 
 import javafx.stage.WindowEvent;
 import libplateau.model.Piece;
@@ -14,8 +15,8 @@ import libplateau.view.GridView;
   
 public class Tetris extends Application { 
     
-    private GridView gridView;
-    private Piece currentPiece;
+    private GridView gridView, nextGridView;
+    private Piece currentPiece, nextPiece;
     private final int interval = 1000;
     private boolean isGameFinished = false;
     Timer timer = new Timer();
@@ -33,6 +34,8 @@ public class Tetris extends Application {
         gridView = new GridView(new Dimension2D(20, 10), 30);
 
         currentPiece = PieceFactory.generate(PieceEnum.getRandomPieceEnum());
+        nextPiece = PieceFactory.generate(PieceEnum.getRandomPieceEnum());
+        //nextGridView.addPiece(nextPiece, new Dimension2D(0, 0));
         gridView.addPiece(currentPiece, currentPiece.getPos());
         
         timer.schedule (new TimerTask() {
@@ -40,6 +43,8 @@ public class Tetris extends Application {
             public void run()
             {
                 if(!gridView.movePiece(currentPiece, new Dimension2D(currentPiece.getPos().getWidth() + 1, currentPiece.getPos().getHeight()))) {
+                    nextPiece = currentPiece;
+                    //nextGridView.addPiece(nextPiece, new Dimension2D(0, 0));
                     currentPiece = PieceFactory.generate(PieceEnum.getRandomPieceEnum());
                     if(!gridView.addPiece(currentPiece, currentPiece.getPos()))
                         isGameFinished = true;
@@ -70,8 +75,11 @@ public class Tetris extends Application {
                 }
             }
         });
+        
+        nextGridView = new GridView(new Dimension2D(3, 3), 10);
+        HBox hbox = new HBox(10, gridView, nextGridView);
 
-        final Scene scene = new Scene(gridView);
+        final Scene scene = new Scene(hbox);
         primaryStage.setTitle("Tetris");
         primaryStage.setScene(scene);
         primaryStage.show();

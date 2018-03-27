@@ -155,7 +155,13 @@ public class Grid extends Observable {
         for (int i = 0; i < size.getWidth(); i++) {
             for (int j = 0; j < size.getHeight(); j++) {
                 if(tab[i][j] == true) {
-                    if (grid[(int) npos.getWidth() + i][(int) npos.getHeight() + j].getVal() != 0) {
+                    if(npos.getWidth() + i < dim.getWidth() && npos.getHeight() + j < dim.getHeight()) {
+                        if (grid[(int) npos.getWidth() + i][(int) npos.getHeight() + j].getVal() != 0) {
+                            return true;
+                        }
+                    }
+                    else
+                    {
                         return true;
                     }
                 }
